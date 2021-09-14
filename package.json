@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "devstart": "nodemon server.js",
-    "test": "mocha ./tests/**/*.spec.js --timeout=100000 --watch --exit"
+    "test": "mocha ./tests/**/*.spec.js --timeout=100000 --exit"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
