@@ -1,50 +1,42 @@
-var createError = require('http-errors'),
+const createError = require('http-errors'),
     express = require('express'),
     path = require('path'),
     cookieParser = require('cookie-parser'),
     exphbs = require('express-handlebars'),
+    routes = require('./src/api/routes/index'),
+    apiError = require('./errors/apiError');
+    httpStatusCodes = require('./errors/httpStatusCode');
     logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
+const app = express();
 
 // view engine setup
 module.exports = function (app) {
-  app.engine('.hbs', exphbs.create({
-    defaultLayout: 'index',
-    layoutsDir: path.join(__dirname, './views'),
-    extname: '.hbs',
-  }).engine);
-  app.set('view engine', 'hbs');
-
   app.use(logger('dev'));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(cookieParser());
 
   // Specify the routes
-  app.use('/', indexRouter);
-  app.use('/users', usersRouter);
+  app.use('/api/v1', routes)
 
   app.use('/public/', express.static(path.join(__dirname, './public')));
 
   // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
-    if (res.status(404)) {
-      res.render('error.hbs', {title: "Sorry, page not found"});
-    }
+  app.use(function (req, res, next) {
+    // render a json response
+    const response = new apiError('resource not found', httpStatusCodes.NOT_FOUND, 'The endpoint does not exist').getErrorObject()
+    res.status(404).json(response)
   });
 
-  // error handler
+  // catch 500 and forward to error handler
   app.use(function(err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-    // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    const response = new apiError('Internal Server Error', httpStatusCodes.INTERNAL_SERVER, 'Internal Server Error').getErrorObject()
+    res.status(500).json(response)
     });
 
     return app;
