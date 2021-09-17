@@ -3,10 +3,11 @@ const createError = require('http-errors'),
     path = require('path'),
     cookieParser = require('cookie-parser'),
     exphbs = require('express-handlebars'),
-    routes = require('./src/api/routes/index'),
-    apiError = require('./errors/apiError');
-    httpStatusCodes = require('./errors/httpStatusCode');
-    logger = require('morgan');
+    apiError = require('./errors/apiError'),
+    httpStatusCodes = require('./errors/httpStatusCode'),
+    logger = require('morgan'),
+    userRouter = require('./src/routes/userRoute'),
+    cardRouter = require('./src/routes/cardRoute');
 
 const app = express();
 
@@ -18,9 +19,8 @@ module.exports = function (app) {
   app.use(cookieParser());
 
   // Specify the routes
-  app.use('/api/v1', routes)
-
-  app.use('/public/', express.static(path.join(__dirname, './public')));
+  app.use('/api/v1', userRouter)
+  app.use('/api/v1/card', cardRouter)
 
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {
