@@ -3,19 +3,19 @@ const BaseError = require('./baseError')
 class apiError extends BaseError {
     constructor (
         name,
-        statusCodes,
+        statusCode,
         message,
         isOperational = true
     ) {
         super(isOperational)
         this.name = name
-        this.statusCodes = statusCodes
+        this.statusCode = statusCode
         this.message = message
     }
     getErrorObject () {
         return {
             name: this.name,
-            statusCodes: this.statusCodes,
+            statusCode: this.statusCode,
             message: this.message,
             isOperational: this.isOperational
         }
