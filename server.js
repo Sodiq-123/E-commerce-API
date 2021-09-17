@@ -1,6 +1,6 @@
 const express = require('express'),
     config = require('./app'),
-    path = require("path"),
+    path = require("path");
     app = express(),
     dotenv = require('dotenv').config();
 
