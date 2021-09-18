@@ -9,10 +9,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       transactionType: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('debit', 'credit')
       },
       purpose: {
-        type: Sequelize.ENUM
+        type: Sequelize.ENUM('deposit', 'transfer', 'withdrawal', 'reversal')
       },
       amount: {
         type: Sequelize.DECIMAL
