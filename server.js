@@ -9,7 +9,7 @@ app.set("port", process.env.PORT || 5000);
 
 // Database connection
 
-const db = require('./database/db')
+const db = require('./src/models')
 db.sequelize.sync()
 
 //  Server
