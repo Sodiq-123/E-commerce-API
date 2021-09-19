@@ -1,4 +1,4 @@
-const { CreditAccount } = require('../utils/helpers')
+const { CreditAccount, DebitAccount } = require('../utils/helpers')
 const { validateUser, validateAmount } = require('../utils/validations')
 const { v4 } = require('uuid')
 const bcrypt = require('bcrypt')
@@ -97,6 +97,44 @@ export const deposit = async (req, res) => {
     })
   } catch (error) {
     await t.rollback()
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+
+/**
+ * @description - Withdraw money from wallet
+ * 
+ * @param {Object} req - request object
+ * 
+ * @param {Object} res - response object
+ * 
+ * @returns {Object} - Object with success value (boolean) and message
+ */
+
+export const withdraw = async (req, res) => {
+  validateAmount(req.body.accountId, req.body.amount)
+  const t = await model.sequelize.transaction()
+  try {
+    const result = await DebitAccount({
+      accountId: req.body.accountId,
+      amount: req.body.amount,
+      reference: v4(),
+      purpose: 'withdraw',
+      t,
+      res,
+      meta: {}
+    })
+
+    await t.commit()
+    return res.status(200).json({
+      success: true,
+      message: 'withdraw successful'
+    })
+  } catch (error) {
     return res.status(400).json({
       success: false,
       message: error.message
