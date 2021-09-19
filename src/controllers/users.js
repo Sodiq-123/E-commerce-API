@@ -194,3 +194,73 @@ export const transfer = async (req, res) => {
     })
   }
 }
+
+/**
+ * @description - Reverse a transaction
+ * 
+ * @param {Object} req - request object
+ * 
+ * @param {Object} res - response object
+ * 
+ * @returns {Object} - Object with success value (boolean) and message
+ */
+
+export const reversal = async (req, res) => {
+  const t = await model.sequelize.transaction()
+  try {
+    const transactions = await model.transactions.findAll(
+      { where: { 
+        reference: req.body.reference
+       } },
+       { transaction: t }
+    )
+
+    if (transactions.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid reference id'
+      })
+    }
+
+    const transactionList = transactions.map((transaction) => {
+      if (transaction.transactionType === 'debit') {
+        return CreditAccount({
+          amount: transaction.amount,
+          accountId: transaction.accountId,
+          reference: v4(),
+          res,
+          t,
+          purpose: 'reversal',
+          meta: {
+            originalReference: transaction.reference
+          }
+        })
+      }
+
+      return DebitAccount({
+        amount: transaction.amount,
+        accountId: transaction.accountId,
+        reference: v4(),
+        purpose: 'debit',
+        res,
+        t,
+        meta: {
+          originalReference: transaction.reference
+        },
+      })
+    })
+
+    await Promise.all(transactionList)
+    await t.commit()
+    return res.status(200).json({
+      success: true,
+      message: 'reversal successful'
+    })
+  } catch (error) {
+    await t.rollback()
+    res.status(400).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
