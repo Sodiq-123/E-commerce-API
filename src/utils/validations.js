@@ -30,3 +30,18 @@ export const validateAmount = (accountId, amount) => {
     }
   }
 }
+
+export const transferAmount = (senderId, recipientId, amount) => {
+  const schema = joi.object({
+    senderId: joi.number().required(),
+    recipientId: joi.number().required(),
+    amount: joi.number().min(1).required()
+  })
+  const validate = schema.validate({ senderId, recipientId, amount })
+  if (validate.error) {
+    return {
+      sucesss: false,
+      error: validate.error.details[0].message
+    }
+  }
+}
