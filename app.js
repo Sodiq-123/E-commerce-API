@@ -7,7 +7,8 @@ const createError = require('http-errors'),
     httpStatusCodes = require('./errors/httpStatusCode'),
     logger = require('morgan'),
     userRouter = require('./src/routes/userRoute'),
-    cardRouter = require('./src/routes/cardRoute');
+    cardRouter = require('./src/routes/cardRoute'),
+    bankRouter = require('./src/routes/bankRoutes');
 
 const app = express();
 
@@ -16,11 +17,11 @@ module.exports = function (app) {
   app.use(logger('dev'));
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-  app.use(cookieParser());
 
   // Specify the routes
   app.use('/api/v1', userRouter)
   app.use('/api/v1/card', cardRouter)
+  app.use('/api/v1/bank', bankRouter)
 
   // catch 404 and forward to error handler
   app.use(function (req, res, next) {

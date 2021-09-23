@@ -1,7 +1,6 @@
-const { Model } = require('sequelize')
-
+const {  Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class CardTransactions extends Model {
+  class Card extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,49 +8,46 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      CardTransactions.belongsTo(models.account)
+      Card.belongsTo(models.users)
     }
-  }
-  CardTransactions.init({
+  };
+  Card.init({
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    accountId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'account',
+        model: 'users',
         key: 'id'
       }
     },
-    externalReference: {
-      allowNull: false,
-      type: DataTypes.STRING,
+    cardNumber: {
+      type: DataTypes.STRING
     },
-    amount: {
-      allowNull: false,
-      type: DataTypes.DECIMAL(20, 4),
+    CVV: {
+      type: DataTypes.STRING
     },
-    last_response: {
-      allowNull: false,
-      type: DataTypes.STRING,
+    expDate: {
+      type: DataTypes.STRING
     },
-    created_at: {
+    createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    updated_at: {
+    updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
   }, {
     sequelize,
-    modelName: 'cardTransactions'
-  })
-  return CardTransactions
-}
+    modelName: 'card',
+  });
+  return Card;
+};

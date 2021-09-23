@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Transactions.belongsTo(models.account)
+      Transactions.belongsTo(models.users)
     }
   }
   Transactions.init({
@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     transactionType: {
       allowNull: false,
@@ -30,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
     amount: {
       allowNull: false,
       type: DataTypes.DECIMAL(20, 4),
-    },
-    accountId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
     },
     reference: {
       type: DataTypes.UUID,
@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
-    updatedAt: {
+    updatedAt: {  
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
