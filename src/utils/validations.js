@@ -1,11 +1,11 @@
 const joi = require('joi')
 const apiError = require('../../errors/apiError')
 
-export const validateUser = (email, username, password) => {
+exports.validateUser = (email, username, password) => {
   const schema = joi.object({
-    email: joi.string().required(),
-    username: joi.string().required(),
-    password: joi.string().required(),
+    email: joi.string().email().required(),
+    username: joi.string().max(20).min(3).required(),
+    password: joi.string().min(6).max(20).required(),
   })
   
   const validate = schema.validate({ email, username, password })
@@ -15,23 +15,29 @@ export const validateUser = (email, username, password) => {
       error: validate.error.details[0].message
     }
   }
+
+  return {
+      success: true
+    }
 }
 
-export const validateAmount = (accountId, amount) => {
+exports.validateAmount = (amount) => {
   const schema = joi.object({
-    accountId: joi.number().required(),
-    ammount: joi.number().min(1).required()
+    amount: joi.number().min(1).required()
   })
-  const validate = schema.validate({ accountId, amount })
+  const validate = schema.validate({ amount })
   if (validate.error) {
     return {
       success: false,
       error: validate.error.details[0].message
     }
   }
+  return {
+    success: true
+  }
 }
 
-export const transferAmount = (senderId, recipientId, amount) => {
+exports.transferAmount = (senderId, recipientId, amount) => {
   const schema = joi.object({
     senderId: joi.number().required(),
     recipientId: joi.number().required(),
@@ -43,5 +49,8 @@ export const transferAmount = (senderId, recipientId, amount) => {
       sucesss: false,
       error: validate.error.details[0].message
     }
+  }
+  return {
+    success: true
   }
 }

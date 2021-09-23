@@ -1,15 +1,17 @@
+const dotenv = require('dotenv').config();
+
 module.exports = {
   development: {
-    username: "root",
-    password: "root",
-    database: "EcommerceAPI_dev",
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DEV_DATABASE,
     host: "localhost",
     dialect: 'mysql'
   },
   test: {
-    username: "root",
-    password: "root",
-    database: "EcommerceAPI_test",
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.TEST_DATABASE,
     host: 'localhost',
     dialect: 'mysql',
   }

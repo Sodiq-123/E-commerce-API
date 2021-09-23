@@ -6,7 +6,8 @@
     "start": "node server.js",
     "devstart": "nodemon server.js",
     "test": "mocha ./tests/**/*.spec.js --timeout=100000 --exit",
-    "migrate": "sequelize db:migrate",
+    "migrate": "npx sequelize db:migrate",
+    "status": "sequelize db:migrate:status",
     "migrate:undo": "sequelize db:migrate:undo",
     "migrate:undo:all": "sequelize db:migrate:undo:all"
   },
@@ -36,6 +37,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.3.0",
     "nodemon": "^2.0.12",
+    "paystack": "^2.0.1",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",

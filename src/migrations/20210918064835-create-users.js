@@ -8,13 +8,23 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING
+      },
+      paystack_customer_id: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      balance: {
+      type: Sequelize.DECIMAL(20, 4).UNSIGNED,
+      allowNull: false,
       },
       createdAt: {
         allowNull: false,

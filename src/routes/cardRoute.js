@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { verifyToken } = require('../middleware/auth')
+const { addCard } = require('../controllers/card')
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.post('/add', verifyToken, addCard)
+// router.post('/edit')
 
 module.exports = router;

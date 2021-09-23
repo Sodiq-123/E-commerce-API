@@ -1,7 +1,7 @@
 const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
-  class Account extends Model {
+  class Bank extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,40 +9,54 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Account.belongsTo(models.users)
-      Account.hasMany(models.transactions)
-      Account.hasMany(models.cardTransactions)
+      Bank.belongsTo(models.users)
     }
   }
-  Account.init({
+  Bank.init({
     id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
       allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
     },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
-    balance: {
-      type: DataTypes.DECIMAL(20, 4).UNSIGNED,
+    recipient_code: {
+      type: DataTypes.STRING,
       allowNull: false,
+    },
+    bankName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    accountName: {
+      type: DataTypes.STRING
+    },
+    accountNumber: {
+      type: DataTypes.STRING
+    },
+    bankCode: {
+      type: DataTypes.STRING
     },
     createdAt: {
-      type: DataTypes.DATE,
       allowNull: false,
+      type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
     updatedAt: {
-      type: DataTypes.DATE,
       allowNull: false,
+      type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
-    }
+    },
   }, {
     sequelize,
-    modelName: 'account',
+    modelName: 'banks'
   })
-  return Account
+  return Bank
 }
