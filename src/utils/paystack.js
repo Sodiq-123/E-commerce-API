@@ -10,7 +10,7 @@ exports.createPaystackCustomer = async (email, firstName='', lastName='', phoneN
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json",
+        "Content-Type": "application/json",
         "cache-control": "no-cache",
       }
     }
@@ -25,7 +25,7 @@ exports.checkPaystackCustomer = async (customer) => {
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"      }
+        "Content-Type": "application/json"      }
     }
   )
   const res = await data.data
@@ -33,17 +33,16 @@ exports.checkPaystackCustomer = async (customer) => {
 }
 
 
-exports.initializeTransaction = async (amount, reference, email, currency='NGN') => {
+exports.initializeTransaction = async (amount, email, currency='NGN') => {
   const data = await axios.post(
     `${PAYSTACK_API_URL}/transaction/initialize`,
     {
-      amount, reference,
-      currency, email, channels: ['card', 'bank']
+      amount, email, currency
     },
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
@@ -58,7 +57,7 @@ exports.verifyTransaction = async (reference) => {
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
@@ -66,9 +65,6 @@ exports.verifyTransaction = async (reference) => {
   return res
 }
 
-exports.sendMoney = async () => {
-
-}
 
 exports.createTransferRecipient = async (accountNumber, bankCode, bankName, currency='NGN', name, email, type='nuban') => {
 const data = await axios.post(
@@ -77,7 +73,7 @@ const data = await axios.post(
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json",
+        "Content-Type": "application/json",
       }
     }
   )
@@ -85,33 +81,17 @@ const data = await axios.post(
   return res
 }
 
-
-exports.createTransfer = async (amount, source, recipient, currency='NGN') => {
-  const data = await axios.post(
-    `${PAYSTACK_API_URL}/transfer`,
-    { amount, currency, source, recipient },
-    {
-      headers: {
-        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
-      }
-    }
-  )
-  const res = await data.data
-  return res
-}
 
 exports.initiateTransfer = async (amount, bank_recipient_code, reason='Withdraw', source='balance') => {
+  console.log({ amount, recipient: bank_recipient_code, reason, source })
   try {
     const data = await axios.post(
       `${PAYSTACK_API_URL}/transfer`,
-      {
-        amount, source, recipient: bank_recipient_code, reason
-      },
+      { amount, recipient: bank_recipient_code, reason, source },
       {
         headers: {
           'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-          "content-type": "application/json"
+          "Content-Type": "application/json"
         }
       }
     )
@@ -122,21 +102,33 @@ exports.initiateTransfer = async (amount, bank_recipient_code, reason='Withdraw'
   }
 }
 
+
 exports.finalizeTransfer = async (transfer_code, otp) => {
   const data = await axios.post(
     `${PAYSTACK_API_URL}/transfer/finalize_transfer`,
-    {
-      transfer_code, otp
-    },
+    { transfer_code, otp },
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
   const res = await data.data
   return res
+}
+
+exports.withdraw = async (amount, bank_recipient_code, reason='Withdraw', source='balance') => {
+  try {
+    const initiatedTransfer = await this.initiateTransfer(amount, bank_recipient_code, reason, source)
+    console.log(initiatedTransfer);
+    if (initiatedTransfer.status === 'success') {
+      const transfer = await this.finalizeTransfer(initiatedTransfer.data.transfer_code)
+      return transfer
+    }
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
 
@@ -147,7 +139,7 @@ exports.resolveBank = async (accountNumber, bankCode) => {
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
@@ -169,7 +161,7 @@ exports.addBank = async (
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )
@@ -183,7 +175,7 @@ exports.deleteBank = async (recipient_code) => {
     {
       headers: {
         'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "content-type": "application/json"
+        "Content-Type": "application/json"
       }
     }
   )

@@ -79,9 +79,9 @@ exports.creditAccount = async (
   ) => {
   try {
       await model.users.increment(
-        { balance: user.amount },
+        { balance: amount },
         { 
-          where: { email },
+          where: { email: user.email },
           transaction: await transaction()
         }
       )
@@ -93,7 +93,7 @@ exports.creditAccount = async (
         userId: user.id,
         reference: uuidv4(),
         purpose: 'deposit',
-        metadata,
+        metadata: metadata || {},
         balanceBefore: Number(user.balance),
         balanceAfter: Number(user.balance) + Number(amount)
       }
@@ -105,6 +105,7 @@ exports.creditAccount = async (
         data: newTransaction.dataValues
       }
     } catch (error) {
+      console.log(error.message)
       await (await transaction()).rollback()
       return {
         success: false,
