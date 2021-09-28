@@ -153,17 +153,18 @@ exports.withdraw = async (req, res) => {
     }
     const withdraw_ = await withdraw(amount*100, bank.recipient_code, reason)
     if (!withdraw_) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Could not finalize withdraw',
         success: false
       })
     }
+    console.log('withdraw', withdraw)
     const result = await debitAccount({
       amount: req.body.amount,
       user
     })
-    if (!result.success) {
-      res.status(400).json({
+    if (!result.status) {
+      return res.status(400).json({
         message: 'Could not finalize withdraw',
         success: false
       })

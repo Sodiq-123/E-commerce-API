@@ -83,7 +83,6 @@ const data = await axios.post(
 
 
 exports.initiateTransfer = async (amount, bank_recipient_code, reason='Withdraw', source='balance') => {
-  console.log({ amount, recipient: bank_recipient_code, reason, source })
   try {
     const data = await axios.post(
       `${PAYSTACK_API_URL}/transfer`,
@@ -103,27 +102,32 @@ exports.initiateTransfer = async (amount, bank_recipient_code, reason='Withdraw'
 }
 
 
-exports.finalizeTransfer = async (transfer_code, otp) => {
-  const data = await axios.post(
-    `${PAYSTACK_API_URL}/transfer/finalize_transfer`,
-    { transfer_code, otp },
-    {
-      headers: {
-        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "Content-Type": "application/json"
+exports.finalizeTransfer = async (transfer_code) => {
+  try {
+    const data = await axios.post(
+      `${PAYSTACK_API_URL}/transfer/finalize_transfer`,
+      { transfer_code },
+      {
+        headers: {
+          'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+          "Content-Type": "application/json"
+        }
       }
-    }
-  )
-  const res = await data.data
-  return res
+    )
+    console.log('res', data)
+    const res = await data.data
+    return res
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
 exports.withdraw = async (amount, bank_recipient_code, reason='Withdraw', source='balance') => {
   try {
     const initiatedTransfer = await this.initiateTransfer(amount, bank_recipient_code, reason, source)
-    console.log(initiatedTransfer);
-    if (initiatedTransfer.status === 'success') {
+    if (initiatedTransfer && initiatedTransfer.status) {
       const transfer = await this.finalizeTransfer(initiatedTransfer.data.transfer_code)
+      console.log(transfer)
       return transfer
     }
   } catch (error) {
