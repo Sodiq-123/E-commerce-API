@@ -186,3 +186,56 @@ exports.deleteBank = async (recipient_code) => {
   const res = await data.data
   return res
 }
+
+
+exports.createCharge = async (amount, email, card, currency='NGN') => {
+  const data = await axios.post(
+    `${PAYSTACK_API_URL}/charge`,
+    {
+      amount, email, currency, card
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+        "Content-Type": "application/json"
+      }
+    }
+  )
+  const res = await data.data
+  return res
+}
+
+
+exports.submitPin = async (reference, pin) => {
+  const data = await axios.post(
+    `${PAYSTACK_API_URL}/charge/submit_pin`,
+    {
+      reference, pin
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+        "Content-Type": "application/json"
+      }
+    }
+  )
+  const res = await data.data
+  return res
+}
+
+exports.resolveCard = async (bin) => {
+  const data = await axios.get(
+    `${PAYSTACK_API_URL}/decision/bin/${bin}`,
+    {
+      bin
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+        "Content-Type": "application/json"
+      }
+    }
+  )
+  const res = await data.data
+  return res
+}

@@ -1,8 +1,8 @@
 const { axiox } = require('axios')
 const { v4: uuidv4 } = require('axios')
 const { model } = require('../models')
-const { CreditAccount } = require('../utils/helpers')
-const { createPaystackCard } = require('../utils/paystack')
+const { creditAccount } = require('../utils/helpers')
+const {  } = require('../utils/paystack')
 require('dotenv').config()
 
 

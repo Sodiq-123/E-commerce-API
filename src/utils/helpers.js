@@ -61,7 +61,7 @@ exports.getBankById = async (id) => {
 
 exports.getBankByUserId = async (id) => {
   const bank = await model.users.findByPk(id)
-  return banks.dataValues
+  return banks?.dataValues
 }
 
 exports.getAllUsers = async () => {
@@ -174,7 +174,6 @@ exports.transfer = async (
         where: { email: sender.email }
       }
     )
-    console.log('decrementing...');
     // create transaction for sender
     const debitTransaction = await model.transactions.create(
       {
@@ -190,7 +189,6 @@ exports.transfer = async (
         balanceAfter: Number(sender.balance) - Number(amount)
       }
     )
-    console.log('debit', debitTransaction)
 
     await model.users.increment(
       { balance: amount },
@@ -259,73 +257,42 @@ exports.fundWallet = async (amount, user) => {
   }
 }
 
-exports.addCard = async (
-  cardNumber,
-  expiryMonth,
-  expiryYear,
-  cvv,
-  email,
-  paystack_customer_id
-  ) => {
+
+exports.addCard = async (cardNumber, expDate, CVV, userId) => {
   try {
     const card = await model.cards.create(
       {
         cardNumber,
-        expiryMonth,
-        expiryYear,
-        cvv,
-        email,
-        paystack_customer_id
+        expDate,
+        CVV,
+        userId
       }
     )
-    return card
+    return card?.dataValues
   } catch (error) {
-    console.log(error)
-  }
-}
-
-exports.editCard = async (
-  cardNumber,
-  expiryMonth,
-  expiryYear,
-  cvv,
-  email,
-  paystack_customer_id
-  ) => {
-  try {
-    const card = await model.cards.update(
-      {
-        cardNumber,
-        expiryMonth,
-        expiryYear,
-        cvv,
-        email,
-        paystack_customer_id
-      },
-      { where: {
-        emailgetAll
-      }, transaction: await transaction() }
-    )
-    await (await transaction()).commit()
-    return card
-  } catch (error) {
-    await (await transaction()).rollback()
+    console.log(error.message)
   }
 }
 
 
-exports.deleteCard = async (
-  email
-  ) => {
+exports.deleteCard = async id => {
   try {
     const card = await model.cards.destroy(
       { where: {
-        email
+        id
       } }
     )
     return card
   } catch (error) {
     console.log(error)
+  }
+}
+
+exports.getCard = async () => {
+  try {
+    const card = await model.cards.find
+  } catch (error) {
+    console.log(error.message)
   }
 }
 

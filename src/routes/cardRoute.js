@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../middleware/auth')
-const { addCard } = require('../controllers/card')
+const { addCard, deleteCard } = require('../controllers/cards')
 
 router.post('/add', verifyToken, addCard)
-// router.post('/edit')
+router.post('/charge', verifyToken, addCard)
+router.post('/pin', verifyToken, addCard)
+router.post('/delete/:cardId', verifyToken, deleteCard)
 
 module.exports = router;

@@ -14,8 +14,8 @@ exports.addBank = async (req, res) => {
     const bankCode = getBankCodeFromSlug(bankSlug)
     if (!bankCode) {
       return res.status(400).json({
-        message: 'Invalid bank details',
         sucess: 'false',
+        message: 'Invalid bank details',
       })
     }
     bankData = await resolveBank(accountNumber, bankCode)
