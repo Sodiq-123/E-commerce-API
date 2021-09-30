@@ -114,7 +114,6 @@ exports.finalizeTransfer = async (transfer_code) => {
         }
       }
     )
-    console.log('res', data)
     const res = await data.data
     return res
   } catch (error) {
@@ -127,7 +126,6 @@ exports.withdraw = async (amount, bank_recipient_code, reason='Withdraw', source
     const initiatedTransfer = await this.initiateTransfer(amount, bank_recipient_code, reason, source)
     if (initiatedTransfer && initiatedTransfer.status) {
       const transfer = await this.finalizeTransfer(initiatedTransfer.data.transfer_code)
-      console.log(transfer)
       return transfer
     }
   } catch (error) {
@@ -188,29 +186,34 @@ exports.deleteBank = async (recipient_code) => {
 }
 
 
-exports.createCharge = async (amount, email, card, currency='NGN') => {
-  const data = await axios.post(
-    `${PAYSTACK_API_URL}/charge`,
-    {
-      amount, email, currency, card
-    },
-    {
-      headers: {
-        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-        "Content-Type": "application/json"
+exports.createCharge = async (amount, email, card) => {
+  try {
+    const data = await axios.post(
+      `${PAYSTACK_API_URL}/charge`,
+      {
+        amount, email, card
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+          "Content-Type": "application/json"
+        }
       }
-    }
-  )
-  const res = await data.data
-  return res
+    )
+    const res = await data.data
+    return res
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 
 exports.submitPin = async (reference, pin) => {
-  const data = await axios.post(
+  try {
+    const data = await axios.post(
     `${PAYSTACK_API_URL}/charge/submit_pin`,
     {
-      reference, pin
+      pin, reference
     },
     {
       headers: {
@@ -221,6 +224,9 @@ exports.submitPin = async (reference, pin) => {
   )
   const res = await data.data
   return res
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
 exports.resolveCard = async (bin) => {

@@ -1,4 +1,4 @@
-const { addCard, deleteCard } = require('../utils/helpers')
+const { addCard, deleteCard, getCard } = require('../utils/helpers')
 const { createCharge ,resolveCard, submitPin } = require('../utils/paystack')
 const { encryptString, decryptString } = require('../../encrypt')
 require('dotenv').config();
@@ -10,8 +10,8 @@ exports.addCard = async (req, res) => {
     const expDate = `${expiryMonth}/${expiryYear}`
     const userId = req.user.id
     const bin = cardNumber.substring(0, 6)
-    cardNumber = await (await encryptString(cardNumber, process.env.ENCRYPTION_KEY)).data.encryptedData
-    cvv = await (await encryptString(cvv, process.env.ENCRYPTION_KEY)).data.encryptedData
+    cardNumber = await (await encryptString(cardNumber)).data.encryptedData
+    cvv = await (await encryptString(cvv)).data.encryptedData
 
     // Resolve card in paystack
     const cardData = await resolveCard(bin)
@@ -42,6 +42,38 @@ exports.addCard = async (req, res) => {
   }
 }
 
+
+exports.getCard = async (req, res) => {
+  try {
+    const { cardId } = req.params
+    const card = await getCard(cardId)
+    const cardObj = {}
+    cardNo = await decryptString(card.dataValues.cardNumber)
+    cvv = await decryptString(card.dataValues.CVV)
+    cardObj.cardNumber = cardNo.data.decryptedData
+    cardObj.CVV = cvv.data.decryptedData
+    cardObj.expiryMonth = card.dataValues.expDate.split('/')[0]
+    cardObj.expiryYear = card.dataValues.expDate.split('/')[1]
+    if (!cardObj) {
+      return res.status(400).json({
+        success: false,
+        message: 'could not get card'
+      })
+    }
+    return res.status(201).json({
+      success: true,
+      message: 'card retrieved successfully',
+      data: cardObj
+    })
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
+
 // Delete card
 exports.deleteCard = async (req, res) => {
   try {
@@ -69,7 +101,15 @@ exports.deleteCard = async (req, res) => {
 exports.createCharge = async (req, res) => {
   try {
     const { amount } = req.body
-    // const card = 
+    const { id } = req.params
+    let myCard = await getCard(id)
+    const card = {}
+    let cardNo = await decryptString(myCard.dataValues.cardNumber)
+    let cvv = await decryptString(myCard.dataValues.CVV)
+    card.cvv = cvv.data.decryptedData
+    card.number = cardNo.data.decryptedData
+    card.expiry_month = myCard.dataValues.expDate.split('/')[0]
+    card.expiry_year = myCard.dataValues.expDate.split('/')[1]
     const charge = await createCharge(amount, req.user.email, card)
     if (!charge) {
       return res.status(400).json({
@@ -77,6 +117,11 @@ exports.createCharge = async (req, res) => {
         message: 'could not create charge'
       })
     }
+    return res.status(201).json({
+      success: true,
+      message: 'charge created successfully',
+      data: charge
+    })
 
   } catch (error) {
     return res.status(400).json({
@@ -89,7 +134,19 @@ exports.createCharge = async (req, res) => {
 exports.submitPin = async (req, res) => {
   try {
     const { reference, pin } = req.body
-    const submit = await submitPin()
+    const submit = await submitPin(reference, pin)
+    console.log('Submit: ', submit)
+    if (!submit) {
+      return res.status(400).json({
+        success: false,
+        message: 'could not create charge'
+      })
+    }
+    return res.status(201).json({
+      success: true,
+      message: 'card transaction successful',
+      data: submit
+    })
   } catch (error) {
     return res.status(400).json({
       success: false,

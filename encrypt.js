@@ -1,9 +1,10 @@
 const crypto  = require('crypto')
-
+require('dotenv').config()
 /**
  * General purpose data encryption function.
  */
-exports.encryptString = async (data, encryptionKey) => {
+exports.encryptString = async (data) => {
+  const encryptionKey = process.env.ENCRYPTION_KEY
   if (!data) {
     return {
       error: 'Invalid data'
@@ -25,13 +26,12 @@ exports.encryptString = async (data, encryptionKey) => {
   }
 }
 
-console.log(this.encryptString('temitope123', '12345'))
-
 
 /**
  * General purpose data decryption function.
  */
-exports.decryptString = async (data, encryptionKey) => {
+exports.decryptString = async (data) => {
+  const encryptionKey = process.env.ENCRYPTION_KEY
   if (!data) {
     return {
       error: 'Invalid data'
@@ -61,5 +61,3 @@ exports.decryptString = async (data, encryptionKey) => {
     }
   }
 }
-
-// console.log(this.decryptString())

@@ -28,7 +28,6 @@ exports.createUser = async (req, res) => {
       }) 
     }
     existingUser = await getUserByEmail(email)
-    console.log(existingUser)
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -36,7 +35,6 @@ exports.createUser = async (req, res) => {
       })
     }
     const customer = await createPaystackCustomer(email)
-    console.log(customer);
     if (!customer) {
       return res.status(400).json({
         success: false,
@@ -158,7 +156,6 @@ exports.withdraw = async (req, res) => {
         success: false
       })
     }
-    console.log('withdraw', withdraw)
     const result = await debitAccount({
       amount: req.body.amount,
       user
@@ -224,7 +221,6 @@ exports.verifyDeposit = async (req, res) => {
         message: 'Could not verify transaction'
       })
     }
-    console.log(sent.data.amount)
     const { amount } = sent.data
 
     const creditData = await creditAccount(amount/100, req.user)

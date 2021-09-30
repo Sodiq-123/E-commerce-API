@@ -72,6 +72,16 @@ exports.getAllUsers = async () => {
 }
 
 
+exports.getCard = async (id) => {
+  const cards = await model.cards.findOne({
+    where: {
+      id
+    }
+  })
+  return cards
+}
+
+
 exports.creditAccount = async (
   amount,
   user,
@@ -288,13 +298,6 @@ exports.deleteCard = async id => {
   }
 }
 
-exports.getCard = async () => {
-  try {
-    const card = await model.cards.find
-  } catch (error) {
-    console.log(error.message)
-  }
-}
 
 exports.addBank = async (
   accountNumber,
