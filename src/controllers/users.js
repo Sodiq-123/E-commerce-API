@@ -27,7 +27,7 @@ exports.createUser = async (req, res) => {
         error: validated.error
       }) 
     }
-    existingUser = await getUserByEmail(email)
+    const existingUser = await getUserByEmail(email)
     if (existingUser) {
       return res.status(400).json({
         success: false,
