@@ -108,7 +108,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await getAllUsers()
     if (!users) {
       res.status(400).json({
-        success: falreq, resse,
+        success: false,
         message: 'Users not found'
       })
     }
